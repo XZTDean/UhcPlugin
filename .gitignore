@@ -1,0 +1,10 @@
+.gradle
+.vscode
+.idea
+*.iws
+*.iml
+*.ipr
+**/.DS_Store
+**/Thumbs.db
+*.cachefile
+*.backup
