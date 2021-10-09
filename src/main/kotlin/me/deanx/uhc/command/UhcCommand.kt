@@ -1,5 +1,6 @@
 package me.deanx.uhc.command
 
+import me.deanx.uhc.Config
 import me.deanx.uhc.Plugin
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -16,7 +17,7 @@ class UhcCommand(private val plugin: Plugin) : CommandExecutor {
         }
         val ret: String? = when (args[0].lowercase()) {
             "start" -> startGame()
-            else -> null
+            else -> return false
         }
         ret?.let { sender.sendMessage(ret) }
         return true

@@ -1,0 +1,14 @@
+border_size:
+  start: 250
+  end: 50
+  time_to_shrink: 900
+  time_before_shrink: 0
+gamemode: SURVIVAL
+difficulty: HARD
+inventory:
+  helmet: null
+  chestplate: null
+  leggings: null
+  boots: null
+  items:
+    - null
