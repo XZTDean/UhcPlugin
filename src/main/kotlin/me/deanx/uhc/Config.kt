@@ -11,25 +11,25 @@ class Config(private val plugin: Plugin) {
 
     val changedList = HashMap<String, Any>()
 
-    var initBorderSize = plugin.getConfig().getInt("border_size.start")
+    var initBorderSize = plugin.getConfig().getDouble("border_size.start")
         set(value) {
             field = value
             changedList["border_size.start"] = value
         }
 
-    var endBorderSize = plugin.getConfig().getInt("border_size.end")
+    var endBorderSize = plugin.getConfig().getDouble("border_size.end")
         set(value) {
             field = value
             changedList["border_size.end"] = value
         }
 
-    var timeToShrink = plugin.getConfig().getInt("border_size.time_to_shrink")
+    var timeToShrink = plugin.getConfig().getLong("border_size.time_to_shrink")
         set(value) {
             field = value
             changedList["border_size.time_to_shrink"] = value
         }
 
-    var timeBeforeShrink = plugin.getConfig().getInt("border_size.time_before_shrink")
+    var timeBeforeShrink = plugin.getConfig().getLong("border_size.time_before_shrink")
         set(value) {
             field = value
             changedList["border_size.time_before_shrink"] = value
