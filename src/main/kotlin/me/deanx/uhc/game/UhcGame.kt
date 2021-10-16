@@ -1,25 +1,56 @@
 package me.deanx.uhc.game
 
 import me.deanx.uhc.Plugin
+import me.deanx.uhc.listener.DeathListener
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.HandlerList
 import kotlin.random.Random
 
 class UhcGame(private val plugin: Plugin, private val center: Location) {
     private val initBorderSize = plugin.config.initBorderSize
     private val endBorderSize = plugin.config.endBorderSize
+    private val survivals = Bukkit.getOnlinePlayers().toHashSet()
+    private val deathListener = DeathListener(plugin, this)
 
     init {
         val world = center.world ?: Bukkit.getWorlds()[0]
         val worldBorder = world.worldBorder
         teleportPlayerRandomly()
+        setPlayerMode()
         worldBorder.center = center
         worldBorder.size = initBorderSize
         Bukkit.getScheduler().runTaskLater(plugin,
             Runnable { worldBorder.setSize(endBorderSize, plugin.config.timeToShrink) },
             plugin.config.timeBeforeShrink * 20)
+    }
+
+    private fun gameEnd() {
+        val world = center.world ?: Bukkit.getWorlds()[0]
+        val worldBorder = world.worldBorder
+        worldBorder.size = worldBorder.size
+        Bukkit.getScheduler().runTaskLater(plugin, Runnable { worldBorder.reset() }, 200)
+        HandlerList.unregisterAll(deathListener)
+    }
+
+    private fun setPlayerMode() {
+        for (player in survivals) {
+            player.gameMode = plugin.config.gameMode
+        }
+    }
+
+    fun playerDeath(player: Player) {
+        survivals.remove(player)
+        player.hashCode()
+        if (survivals.size == 1) {
+            gameEnd()
+        }
+    }
+
+    fun isSurvival(player: Player): Boolean {
+        return survivals.contains(player)
     }
 
     private fun teleportPlayerRandomly() {
@@ -30,7 +61,7 @@ class UhcGame(private val plugin: Plugin, private val center: Location) {
     }
 
     private fun selectPlayerStartLocation(): Map<Player, Location> {
-        val playerList: Collection<Player> = Bukkit.getOnlinePlayers()
+        val playerList = survivals
         val locationSet = HashSet<Location>()
         var maxIter = playerList.size * 4
         while (locationSet.size < playerList.size && maxIter > 0) {
