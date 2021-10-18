@@ -1,10 +1,11 @@
 package me.deanx.uhc.command
 
-import me.deanx.uhc.Config
 import me.deanx.uhc.Plugin
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 class UhcCommand(private val plugin: Plugin) : CommandExecutor {
     init {
@@ -16,14 +17,23 @@ class UhcCommand(private val plugin: Plugin) : CommandExecutor {
             return false
         }
         val ret: String? = when (args[0].lowercase()) {
-            "start" -> startGame()
+            "start" -> startGame(sender)
             else -> return false
         }
         ret?.let { sender.sendMessage(ret) }
         return true
     }
 
-    private fun startGame(): String {
-        TODO("Not yet implemented")
+    private fun startGame(sender: CommandSender): String? {
+        if (sender is Player) {
+            if (!plugin.startGame(sender.location)) {
+                return "Cannot start, Game is running now."
+            }
+        } else {
+            if (!plugin.startGame(Bukkit.getWorlds()[0].spawnLocation)) {
+                return "Cannot start, Game is running now."
+            }
+        }
+        return null
     }
 }

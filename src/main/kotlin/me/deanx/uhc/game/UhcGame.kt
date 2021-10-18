@@ -33,6 +33,7 @@ class UhcGame(private val plugin: Plugin, private val center: Location) {
         worldBorder.size = worldBorder.size
         Bukkit.getScheduler().runTaskLater(plugin, Runnable { worldBorder.reset() }, 200)
         HandlerList.unregisterAll(deathListener)
+        plugin.removeGame()
     }
 
     private fun setPlayerMode() {
