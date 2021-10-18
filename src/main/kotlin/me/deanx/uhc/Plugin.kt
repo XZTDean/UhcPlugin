@@ -25,6 +25,14 @@ class Plugin : JavaPlugin() {
         return true
     }
 
+    fun stopGame(): Boolean {
+        if (uhcGame == null) {
+            return false
+        }
+        uhcGame!!.gameEnd()
+        return true
+    }
+
     fun removeGame() {
         uhcGame = null
     }

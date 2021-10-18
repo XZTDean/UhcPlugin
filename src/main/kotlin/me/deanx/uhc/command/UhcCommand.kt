@@ -18,6 +18,7 @@ class UhcCommand(private val plugin: Plugin) : CommandExecutor {
         }
         val ret: String? = when (args[0].lowercase()) {
             "start" -> startGame(sender)
+            "stop" -> stopGame()
             else -> return false
         }
         ret?.let { sender.sendMessage(ret) }
@@ -33,6 +34,13 @@ class UhcCommand(private val plugin: Plugin) : CommandExecutor {
             if (!plugin.startGame(Bukkit.getWorlds()[0].spawnLocation)) {
                 return "Cannot start, Game is running now."
             }
+        }
+        return null
+    }
+
+    private fun stopGame(): String? {
+        if (!plugin.stopGame()) {
+            return "No exist game."
         }
         return null
     }

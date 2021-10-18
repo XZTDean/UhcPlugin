@@ -2,38 +2,57 @@ package me.deanx.uhc.game
 
 import me.deanx.uhc.Plugin
 import me.deanx.uhc.listener.DeathListener
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.Material
+import org.bukkit.*
 import org.bukkit.entity.Player
-import org.bukkit.event.HandlerList
 import kotlin.random.Random
 
-class UhcGame(private val plugin: Plugin, private val center: Location) {
+class UhcGame(private val plugin: Plugin, val center: Location) {
     private val initBorderSize = plugin.config.initBorderSize
     private val endBorderSize = plugin.config.endBorderSize
     private val survivals = Bukkit.getOnlinePlayers().toHashSet()
     private val deathListener = DeathListener(plugin, this)
+    private val worldBorder: WorldBorder
 
     init {
+        if (survivals.size <= 1) {
+            survivals.clear()
+            gameEnd()
+            Bukkit.broadcastMessage("There is not enough player for UHC")
+        }
+
         val world = center.world ?: Bukkit.getWorlds()[0]
-        val worldBorder = world.worldBorder
-        teleportPlayerRandomly()
+        worldBorder = world.worldBorder
+        teleportPlayersRandomly()
         setPlayerMode()
+        world.difficulty = plugin.config.difficulty
+        world.time = 0
         worldBorder.center = center
         worldBorder.size = initBorderSize
         Bukkit.getScheduler().runTaskLater(plugin,
             Runnable { worldBorder.setSize(endBorderSize, plugin.config.timeToShrink) },
             plugin.config.timeBeforeShrink * 20)
+        displayTitleStart()
     }
 
-    private fun gameEnd() {
-        val world = center.world ?: Bukkit.getWorlds()[0]
-        val worldBorder = world.worldBorder
+    fun gameEnd() {
         worldBorder.size = worldBorder.size
         Bukkit.getScheduler().runTaskLater(plugin, Runnable { worldBorder.reset() }, 200)
-        HandlerList.unregisterAll(deathListener)
+        deathListener.unregister()
+        congrulationDisplay()
         plugin.removeGame()
+    }
+
+    private fun displayTitleStart() {
+        for (player in survivals) {
+            player.sendTitle("UHC Start", null, 5, 30, 5)
+        }
+    }
+
+    private fun congrulationDisplay () {
+        for (player in survivals) {
+            player.playSound(player.location, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f)
+            player.sendTitle("You Win!", null, 10, 40, 10)
+        }
     }
 
     private fun setPlayerMode() {
@@ -44,8 +63,9 @@ class UhcGame(private val plugin: Plugin, private val center: Location) {
 
     fun playerDeath(player: Player) {
         survivals.remove(player)
-        player.hashCode()
-        if (survivals.size == 1) {
+        if (survivals.size > 1) {
+            Bukkit.broadcastMessage(survivals.size.toString() + " players are remaining.")
+        } else {
             gameEnd()
         }
     }
@@ -54,7 +74,12 @@ class UhcGame(private val plugin: Plugin, private val center: Location) {
         return survivals.contains(player)
     }
 
-    private fun teleportPlayerRandomly() {
+    fun teleportPlayer(player: Player) {
+        val location = findSafeLocation(center, worldBorder.size.toInt())
+        player.teleport(location)
+    }
+
+    private fun teleportPlayersRandomly() {
         val map = selectPlayerStartLocation()
         for ((player, location) in map) {
             player.teleport(location)
