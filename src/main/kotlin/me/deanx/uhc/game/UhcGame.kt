@@ -2,6 +2,7 @@ package me.deanx.uhc.game
 
 import me.deanx.uhc.Plugin
 import me.deanx.uhc.listener.DeathListener
+import me.deanx.uhc.listener.DisconnectionListener
 import org.bukkit.*
 import org.bukkit.entity.Player
 import kotlin.random.Random
@@ -11,6 +12,7 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
     private val endBorderSize = plugin.config.endBorderSize
     private val survivals = Bukkit.getOnlinePlayers().toHashSet()
     private val deathListener = DeathListener(plugin, this)
+    private val disconnectionListener = DisconnectionListener(plugin, this)
     private val worldBorder: WorldBorder
 
     init {
@@ -38,6 +40,7 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
         worldBorder.size = worldBorder.size
         Bukkit.getScheduler().runTaskLater(plugin, Runnable { worldBorder.reset() }, 200)
         deathListener.unregister()
+        disconnectionListener.unregister()
         congrulationDisplay()
         plugin.removeGame()
     }
