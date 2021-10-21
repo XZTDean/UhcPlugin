@@ -16,24 +16,29 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
     private val worldBorder: WorldBorder
 
     init {
-        if (survivals.size <= 1) {
-            survivals.clear()
-            gameEnd()
-            Bukkit.broadcastMessage("There is not enough player for UHC")
-        }
-
         val world = center.world ?: Bukkit.getWorlds()[0]
         worldBorder = world.worldBorder
-        teleportPlayersRandomly()
-        setPlayerMode()
-        world.difficulty = plugin.config.difficulty
-        world.time = 0
-        worldBorder.center = center
-        worldBorder.size = initBorderSize
-        Bukkit.getScheduler().runTaskLater(plugin,
-            Runnable { worldBorder.setSize(endBorderSize, plugin.config.timeToShrink) },
-            plugin.config.timeBeforeShrink * 20)
-        displayTitleStart()
+        if (survivals.size <= 1) {
+            deathListener.unregister()
+            disconnectionListener.unregister()
+            plugin.removeGame()
+            Bukkit.broadcastMessage("There is not enough player for UHC")
+//        }
+        } else {
+            teleportPlayersRandomly()
+            setPlayerMode()
+            world.difficulty = plugin.config.difficulty
+            world.time = 0
+            world.setGameRule(GameRule.NATURAL_REGENERATION, false)
+            worldBorder.center = center
+            worldBorder.size = initBorderSize
+            Bukkit.getScheduler().runTaskLater(
+                plugin,
+                Runnable { worldBorder.setSize(endBorderSize, plugin.config.timeToShrink) },
+                plugin.config.timeBeforeShrink * 20
+            )
+            displayTitleStart()
+        }
     }
 
     fun gameEnd() {
@@ -41,7 +46,9 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
         Bukkit.getScheduler().runTaskLater(plugin, Runnable { worldBorder.reset() }, 200)
         deathListener.unregister()
         disconnectionListener.unregister()
-        congrulationDisplay()
+        congratulationDisplay()
+        val world = center.world ?: Bukkit.getWorlds()[0]
+        world.setGameRule(GameRule.NATURAL_REGENERATION, true)
         plugin.removeGame()
     }
 
@@ -51,7 +58,7 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
         }
     }
 
-    private fun congrulationDisplay () {
+    private fun congratulationDisplay () {
         for (player in survivals) {
             player.playSound(player.location, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f)
             player.sendTitle("You Win!", null, 10, 40, 10)
@@ -78,7 +85,7 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
     }
 
     fun teleportPlayer(player: Player) {
-        val location = findSafeLocation(center, worldBorder.size.toInt())
+        val location = findSafeLocation(center, worldBorder.size.toInt() / 2)
         player.teleport(location)
     }
 
@@ -94,7 +101,7 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
         val locationSet = HashSet<Location>()
         var maxIter = playerList.size * 4
         while (locationSet.size < playerList.size && maxIter > 0) {
-            val location = findSafeLocation(center, plugin.config.initBorderSize.toInt())
+            val location = findSafeLocation(center, plugin.config.initBorderSize.toInt() / 2)
             locationSet.add(location)
             --maxIter
         }
@@ -124,15 +131,17 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
     }
 
     private fun isSafeLocation(location: Location): Boolean {
+        val upCheckLocation = location.clone()
         for (i in 0..2) {
-            val checkLocation = location.add(0.0, i.toDouble(), 0.0)
-            if (checkLocation.block.type != Material.AIR) {
+            if (upCheckLocation.block.type != Material.AIR) {
                 return false
             }
+            upCheckLocation.y += 1
         }
-        location.y -= 1
+        val downCheckLocation = location.clone()
         for (i in 0..2) {
-            val type: Material = location.block.type
+            downCheckLocation.y -= 1
+            val type: Material = downCheckLocation.block.type
             if (type != Material.AIR) {
                 return type != Material.WATER && type != Material.LAVA
             }

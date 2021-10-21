@@ -1,5 +1,6 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.5.31'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
 }
 
 group 'me.deanx'
@@ -25,4 +26,8 @@ dependencies {
 
 compileKotlin {
     kotlinOptions.jvmTarget = 1.8
+}
+
+shadowJar {
+    minimize()
 }
