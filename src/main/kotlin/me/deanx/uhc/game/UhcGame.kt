@@ -4,6 +4,7 @@ import me.deanx.uhc.Plugin
 import me.deanx.uhc.listener.DeathListener
 import me.deanx.uhc.listener.DisconnectionListener
 import org.bukkit.*
+import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import kotlin.random.Random
 
@@ -23,10 +24,10 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
             disconnectionListener.unregister()
             plugin.removeGame()
             Bukkit.broadcastMessage("There is not enough player for UHC")
-//        }
         } else {
+            worldBorder.reset()
             teleportPlayersRandomly()
-            setPlayerMode()
+            setPlayerState()
             world.difficulty = plugin.config.difficulty
             world.time = 0
             world.setGameRule(GameRule.NATURAL_REGENERATION, false)
@@ -65,9 +66,13 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
         }
     }
 
-    private fun setPlayerMode() {
+    private fun setPlayerState() {
         for (player in survivals) {
             player.gameMode = plugin.config.gameMode
+            player.health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue ?: 20.0
+            player.foodLevel = 20
+            player.saturation = 5f
+            player.inventory.clear()
         }
     }
 
