@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerRespawnEvent
 
 class DeathListener(private val plugin: Plugin, private val uhcGame: UhcGame) : Listener {
     init {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+        Bukkit.getPluginManager().registerEvents(this, plugin)
     }
 
     fun unregister() {

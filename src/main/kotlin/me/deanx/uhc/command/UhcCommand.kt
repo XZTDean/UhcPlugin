@@ -19,6 +19,7 @@ class UhcCommand(private val plugin: Plugin) : CommandExecutor {
         val ret: String? = when (args[0].lowercase()) {
             "start" -> startGame(sender)
             "stop" -> stopGame()
+            "config" -> changeConfig(args)
             else -> return false
         }
         ret?.let { sender.sendMessage(ret) }
@@ -43,5 +44,18 @@ class UhcCommand(private val plugin: Plugin) : CommandExecutor {
             return "No exist game."
         }
         return null
+    }
+
+    private fun changeConfig(args: Array<out String>): String {
+        if (args.size <= 1) {
+            return "The config name is needed."
+        }
+        if (!plugin.config.CONFIGS.contains(args[1])) {
+            return "Cannot find the config " + args[1]
+        }
+        if (args.size > 2) {
+            plugin.config.set(args[1], args[2])
+        }
+        return args[1] + " = " + plugin.config.get(args[1])
     }
 }

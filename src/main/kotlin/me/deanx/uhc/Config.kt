@@ -9,7 +9,9 @@ class Config(private val plugin: Plugin) {
         plugin.getConfig().options().copyDefaults(true)
     }
 
-    val changedList = HashMap<String, Any>()
+    val CONFIGS: Set<String> = hashSetOf("gamemode", "difficulty", "initborder", "endborder", "timetoshrink", "timebeforeshrink")
+
+    private val changedList = HashMap<String, Any>()
 
     var initBorderSize = plugin.getConfig().getDouble("border_size.start")
         set(value) {
@@ -81,4 +83,28 @@ class Config(private val plugin: Plugin) {
         Difficulty.PEACEFUL -> "PEACEFUL"
     }
 
+    fun get(field: String): String {
+        return when(field.lowercase()) {
+            "gamemode" -> getGameModeName(gameMode)
+            "difficulty" -> difficulty.name
+            "initborder" -> initBorderSize.toString()
+            "endborder" -> endBorderSize.toString()
+            "timetoshrink" -> timeToShrink.toString()
+            "timebeforeshrink" -> timeBeforeShrink.toString()
+            else -> ""
+        }
+    }
+
+    fun set(field: String, value: String): Boolean {
+        when(field.lowercase()) {
+            "gamemode" -> gameMode = getGameModeFromString(value)
+            "difficulty" -> difficulty = getDifficultyFromString(value)
+            "initborder" -> initBorderSize = value.toDouble()
+            "endborder" -> endBorderSize = value.toDouble()
+            "timetoshrink" -> timeToShrink = value.toLong()
+            "timebeforeshrink" -> timeBeforeShrink = value.toLong()
+            else -> return false
+        }
+        return true
+    }
 }

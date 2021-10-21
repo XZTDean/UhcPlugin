@@ -16,7 +16,7 @@ class DisconnectionListener(private val plugin: Plugin, private val uhcGame: Uhc
     private val playerMap = HashMap<Player, BukkitTask>()
 
     init {
-        Bukkit.getPluginManager().registerEvents(this, plugin);
+        Bukkit.getPluginManager().registerEvents(this, plugin)
     }
 
     fun unregister() {
