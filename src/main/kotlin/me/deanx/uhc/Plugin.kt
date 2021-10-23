@@ -23,7 +23,7 @@ class Plugin : JavaPlugin() {
         if (uhcGame != null) {
             return false
         }
-        uhcGame = UhcGame(this, center)
+        uhcGame = UhcGame.newGame(this, center)
         return true
     }
 

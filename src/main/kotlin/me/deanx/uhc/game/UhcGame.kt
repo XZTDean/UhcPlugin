@@ -8,7 +8,7 @@ import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 import kotlin.random.Random
 
-class UhcGame(private val plugin: Plugin, val center: Location) {
+class UhcGame private constructor(private val plugin: Plugin, val center: Location) {
     private val initBorderSize = plugin.config.initBorderSize
     private val endBorderSize = plugin.config.endBorderSize
     private val survivals = Bukkit.getOnlinePlayers().toHashSet()
@@ -17,28 +17,36 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
     private val worldBorder: WorldBorder
 
     init {
-        val world = center.world ?: Bukkit.getWorlds()[0]
+        val world = center.world!!
         worldBorder = world.worldBorder
-        if (survivals.size <= 1) {
-            deathListener.unregister()
-            disconnectionListener.unregister()
-            plugin.removeGame()
-            Bukkit.broadcastMessage("There is not enough player for UHC")
-        } else {
-            worldBorder.reset()
-            teleportPlayersRandomly()
-            setPlayerState()
-            world.difficulty = plugin.config.difficulty
-            world.time = 0
-            world.setGameRule(GameRule.NATURAL_REGENERATION, false)
-            worldBorder.center = center
-            worldBorder.size = initBorderSize
-            Bukkit.getScheduler().runTaskLater(
-                plugin,
-                Runnable { worldBorder.setSize(endBorderSize, plugin.config.timeToShrink) },
-                plugin.config.timeBeforeShrink * 20
-            )
-            displayTitleStart()
+        worldBorder.reset()
+        teleportPlayersRandomly()
+        setPlayerState()
+        world.difficulty = plugin.config.difficulty
+        world.time = 0
+        world.setStorm(false)
+        world.setGameRule(GameRule.NATURAL_REGENERATION, false)
+        worldBorder.center = center
+        worldBorder.size = initBorderSize
+        Bukkit.getScheduler().runTaskLater(
+            plugin,
+            Runnable { worldBorder.setSize(endBorderSize, plugin.config.timeToShrink) },
+            plugin.config.timeBeforeShrink * 20
+        )
+        displayTitleStart()
+    }
+
+    companion object {
+        fun newGame(plugin: Plugin, center: Location): UhcGame? {
+            if (Bukkit.getOnlinePlayers().size <= 1) {
+                Bukkit.broadcastMessage("There is not enough player for UHC")
+                return null
+            }
+            if (center.world == null) {
+                Bukkit.broadcastMessage("Center Location is not allowed for UHC")
+                return null
+            }
+            return UhcGame(plugin, center)
         }
     }
 
@@ -48,7 +56,7 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
         deathListener.unregister()
         disconnectionListener.unregister()
         congratulationDisplay()
-        val world = center.world ?: Bukkit.getWorlds()[0]
+        val world = center.world!!
         world.setGameRule(GameRule.NATURAL_REGENERATION, true)
         plugin.removeGame()
     }
@@ -73,6 +81,11 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
             player.foodLevel = 20
             player.saturation = 5f
             player.inventory.clear()
+            val iterator = Bukkit.getServer().advancementIterator()
+            while (iterator.hasNext()) {
+                val progress = player.getAdvancementProgress(iterator.next())
+                for (criteria in progress.awardedCriteria) progress.revokeCriteria(criteria!!)
+            }
         }
     }
 
@@ -122,9 +135,6 @@ class UhcGame(private val plugin: Plugin, val center: Location) {
     }
 
     private fun findSafeLocation(center: Location, radius: Int): Location {
-        if (center.world == null) {
-            return center
-        }
         var location: Location
         do {
             val x = center.blockX + Random.nextInt(-radius, radius)
