@@ -6,6 +6,8 @@ import me.deanx.uhc.listener.DisconnectionListener
 import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import kotlin.random.Random
 
 class UhcGame private constructor(private val plugin: Plugin, val center: Location) {
@@ -81,11 +83,20 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
             player.foodLevel = 20
             player.saturation = 5f
             player.inventory.clear()
+            removePotionEffect(player)
+            player.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 2))
             val iterator = Bukkit.getServer().advancementIterator()
             while (iterator.hasNext()) {
                 val progress = player.getAdvancementProgress(iterator.next())
                 for (criteria in progress.awardedCriteria) progress.revokeCriteria(criteria!!)
             }
+        }
+    }
+
+    private fun removePotionEffect(player: Player) {
+        val potionEffectList: Collection<PotionEffect> = player.activePotionEffects
+        for (potion in potionEffectList) {
+            player.removePotionEffect(potion.type)
         }
     }
 
@@ -141,6 +152,8 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
             val z = center.blockZ + Random.nextInt(-radius, radius)
             location = center.world!!.getHighestBlockAt(x, z).location
             location.y += 1
+            location.x += 0.5
+            location.z += 0.5
         } while (!isSafeLocation(location))
         return location
     }
