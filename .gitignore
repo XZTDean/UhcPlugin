@@ -1,4 +1,5 @@
 .gradle
+/build
 .vscode
 .idea
 *.iws
@@ -8,3 +9,4 @@
 **/Thumbs.db
 *.cachefile
 *.backup
+*.class
