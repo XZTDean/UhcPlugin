@@ -67,8 +67,9 @@ jobs:
           path: plugins/StopServer.jar
           key: ${{ runner.os }}-cache-plugins-StopServer.jar
       - name: Download needed plugins
-        if: steps.cache-plugins.outputs.cache-hit == 'false'
+        if: steps.cache-plugins.outputs.cache-hit != 'true'
         run: wget -q https://dl.isurl.tech/StopServer.jar
+        working-directory: plugins
       - name: Agree eula
         run: echo "eula=true" > eula.txt
       - name: Run the game
