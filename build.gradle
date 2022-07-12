@@ -1,6 +1,6 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.10'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 group 'me.deanx'
@@ -20,15 +20,19 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.5.31'
-    compileOnly 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.10'
+    compileOnly 'org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT'
 }
 
 compileKotlin {
     kotlinOptions.jvmTarget = 1.8
 }
 
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
 shadowJar {
     minimize()
-    classifier = null
 }
