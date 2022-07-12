@@ -46,7 +46,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: release
-          path: uhc
+          path: plugins
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -60,11 +60,15 @@ jobs:
           fileName: "PaperUpdater*.jar"
       - name: Download minecraft new build
         run: java -jar -Xms4G -Xmx4G PaperUpdater*.jar
+      - name: Cache needed plugins
+        id: cache-plugins
+        uses: actions/cache@v3
+        with:
+          path: plugins/StopServer.jar
+          key: ${{ runner.os }}-cache-plugins-StopServer.jar
       - name: Download needed plugins
-        run: |
-          mkdir -p plugins && cd plugins
-          wget -q https://dl.isurl.tech/StopServer.jar
-          cp ../uhc/UHC*.jar ./
+        if: steps.cache-plugins.outputs.cache-hit == 'false'
+        run: wget -q https://dl.isurl.tech/StopServer.jar
       - name: Agree eula
         run: echo "eula=true" > eula.txt
       - name: Run the game
