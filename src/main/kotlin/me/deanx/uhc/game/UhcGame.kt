@@ -5,6 +5,7 @@ import me.deanx.uhc.listener.DeathListener
 import me.deanx.uhc.listener.DisconnectionListener
 import org.bukkit.*
 import org.bukkit.attribute.Attribute
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -24,7 +25,7 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
         worldBorder.reset()
         teleportPlayersRandomly()
         setPlayerState()
-        world.difficulty = plugin.config.difficulty
+        world.setWorldDifficulty(plugin.config.difficulty)
         world.time = 0
         world.setStorm(false)
         world.setGameRule(GameRule.NATURAL_REGENERATION, false)
@@ -64,26 +65,26 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
     }
 
     private fun displayTitleStart() {
-        for (player in survivals) {
+        survivals.forEach { player ->
             player.sendTitle("UHC Start", null, 5, 30, 5)
         }
     }
 
     private fun congratulationDisplay () {
-        for (player in survivals) {
+        survivals.forEach { player ->
             player.playSound(player.location, Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f)
             player.sendTitle("You Win!", null, 10, 40, 10)
         }
     }
 
     private fun setPlayerState() {
-        for (player in survivals) {
+        survivals.forEach { player ->
             player.gameMode = plugin.config.gameMode
             player.health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue ?: 20.0
             player.foodLevel = 20
             player.saturation = 5f
             player.inventory.clear()
-            removePotionEffect(player)
+            player.removePotionEffect()
             player.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 2))
             val iterator = Bukkit.getServer().advancementIterator()
             while (iterator.hasNext()) {
@@ -93,10 +94,10 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
         }
     }
 
-    private fun removePotionEffect(player: Player) {
-        val potionEffectList: Collection<PotionEffect> = player.activePotionEffects
+    private fun LivingEntity.removePotionEffect() {
+        val potionEffectList: Collection<PotionEffect> = this.activePotionEffects
         for (potion in potionEffectList) {
-            player.removePotionEffect(potion.type)
+            this.removePotionEffect(potion.type)
         }
     }
 
@@ -177,4 +178,9 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
         return false
     }
 
+    private fun World.setWorldDifficulty(difficulty: Difficulty) {
+        this.difficulty = difficulty
+        val allowMonster = (difficulty == Difficulty.PEACEFUL)
+        this.setSpawnFlags(allowMonster, allowAnimals)
+    }
 }
