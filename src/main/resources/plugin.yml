@@ -8,3 +8,7 @@ api-version: 1.13
 commands:
   UHC:
     description: UHC command
+  center:
+    description: Get the distance to center
+    permission: uhc.center
+    aliases: CenterDistance
