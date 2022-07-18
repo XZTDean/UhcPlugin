@@ -29,7 +29,9 @@ class Plugin : JavaPlugin() {
             return false
         }
         uhcGame = UhcGame.newGame(this, center)
-        centerCommand.startGame(center)
+        if (uhcGame != null) {
+            centerCommand.startGame(center)
+        }
         return true
     }
 

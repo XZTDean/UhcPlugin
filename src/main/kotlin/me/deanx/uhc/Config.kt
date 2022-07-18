@@ -49,7 +49,35 @@ class Config(private val plugin: Plugin) {
             changedList["difficulty"] = getDifficultyName(value)
         }
 
+    var enableCenterDistance: Boolean = plugin.getConfig().getBoolean("center_distance.enable")
+        set(value) {
+            field = value
+            changedList["center_distance.enable"] = value
+        }
+
+    var centerDistanceDelay: Long = plugin.getConfig().getLong("center_distance.delay")
+        set(value) {
+            field = value
+            changedList["center_distance.delay"] = value
+        }
+
+    var allowAutoQueryCenterDistance: Boolean = plugin.getConfig().getBoolean("center_distance.allow_auto_query")
+        set(value) {
+            field = value
+            changedList["center_distance.allow_auto_query"] = value
+        }
+
+    var enableAutoQueryCenterDistance: Boolean = plugin.getConfig().getBoolean("center_distance.enable_auto_query")
+        set(value) {
+            field = value
+            changedList["center_distance.enable_auto_query"] = value
+        }
+
     fun saveConfig() {
+        changedList.forEach { entry ->
+            plugin.getConfig().set(entry.key, entry.value)
+        }
+        changedList.clear()
         plugin.saveConfig()
     }
 

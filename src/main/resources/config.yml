@@ -12,3 +12,8 @@ inventory:
   boots: null
   items:
     - null
+center_distance:
+  enable: true
+  delay: 30
+  allow_auto_query: true
+  enable_auto_query: false
