@@ -55,9 +55,9 @@ class Config(private val plugin: Plugin) {
             changedList["center_distance.enable"] = value
         }
 
-    var centerDistanceDelay: Long = plugin.getConfig().getLong("center_distance.delay")
+    var centerDistanceDelay: Long = plugin.getConfig().getLong("center_distance.delay") * 20
         set(value) {
-            field = value
+            field = value * 20
             changedList["center_distance.delay"] = value
         }
 
