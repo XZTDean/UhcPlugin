@@ -7,7 +7,6 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.permissions.PermissionAttachment
 import org.bukkit.scheduler.BukkitTask
 
 class CenterCommand(private val plugin: Plugin) : CommandExecutor {
@@ -20,7 +19,6 @@ class CenterCommand(private val plugin: Plugin) : CommandExecutor {
     private var enabled: Boolean = false
     private var allowAutoQuery: Boolean = false
     private var delay = plugin.config.centerDistanceDelay
-    private val permissionList = mutableListOf<PermissionAttachment>()
     private val autoQueryPlayer = HashMap<Player, BukkitTask>()
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -55,9 +53,13 @@ class CenterCommand(private val plugin: Plugin) : CommandExecutor {
     }
 
     private fun autoQueryCenterDistance(player: Player) {
-        getCenterDistance(player, center!!.world!!.fullTime)
-        val autoQueryTask = Bukkit.getScheduler().runTaskLater(plugin, Runnable { autoQueryCenterDistance(player) }, delay)
-        autoQueryPlayer[player] = autoQueryTask
+        if (player.hasPermission("uhc.center")) {
+            getCenterDistance(player, center!!.world!!.fullTime)
+            val autoQueryTask = Bukkit.getScheduler().runTaskLater(plugin, Runnable { autoQueryCenterDistance(player) }, delay)
+            autoQueryPlayer[player] = autoQueryTask
+        } else {
+            autoQueryPlayer.remove(player)
+        }
     }
 
     fun startGame(center: Location) {
@@ -66,7 +68,6 @@ class CenterCommand(private val plugin: Plugin) : CommandExecutor {
             enabled = true
             allowAutoQuery = plugin.config.allowAutoQueryCenterDistance
             delay = plugin.config.centerDistanceDelay
-            Bukkit.getOnlinePlayers().forEach { permissionList.add(it.addAttachment(plugin, "uhc.center", true)) }
             if (allowAutoQuery && plugin.config.enableAutoQueryCenterDistance) {
                 Bukkit.getOnlinePlayers().forEach { it.enableAutoQuery() }
             }
@@ -78,8 +79,6 @@ class CenterCommand(private val plugin: Plugin) : CommandExecutor {
         center = null
         autoQueryPlayer.forEach { it.value.cancel() }
         autoQueryPlayer.clear()
-        permissionList.forEach { it.remove() }
-        permissionList.clear()
         lastExecutionTime.clear()
     }
 

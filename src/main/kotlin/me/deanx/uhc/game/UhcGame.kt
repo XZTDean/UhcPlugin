@@ -7,6 +7,7 @@ import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
+import org.bukkit.permissions.PermissionAttachment
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import kotlin.random.Random
@@ -18,6 +19,7 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
     private val deathListener = DeathListener(plugin, this)
     private val disconnectionListener = DisconnectionListener(plugin, this)
     private val worldBorder: WorldBorder
+    private val permissionMap = HashMap<Player, PermissionAttachment>()
 
     init {
         val world = center.world!!
@@ -61,6 +63,7 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
         congratulationDisplay()
         val world = center.world!!
         world.setGameRule(GameRule.NATURAL_REGENERATION, true)
+        permissionMap.forEach { it.value.remove() }
         plugin.removeGame()
     }
 
@@ -91,6 +94,10 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
                 val progress = player.getAdvancementProgress(iterator.next())
                 for (criteria in progress.awardedCriteria) progress.revokeCriteria(criteria!!)
             }
+            if (plugin.config.enableCenterDistance) {
+                val permissionAttachment = player.addAttachment(plugin, "uhc.center", true)
+                permissionMap[player] = permissionAttachment
+            }
         }
     }
 
@@ -103,6 +110,7 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
 
     fun playerDeath(player: Player) {
         survivals.remove(player)
+        permissionMap[player]?.setPermission("uhc.center", false)
         if (survivals.size > 1) {
             Bukkit.broadcastMessage(survivals.size.toString() + " players are remaining.")
         } else {
