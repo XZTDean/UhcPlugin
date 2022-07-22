@@ -97,6 +97,10 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
             if (plugin.config.enableCenterDistance) {
                 val permissionAttachment = player.addAttachment(plugin, "uhc.center", true)
                 permissionMap[player] = permissionAttachment
+                if (!player.isOp) { // used to refresh tab auto-completer
+                    player.isOp = true
+                    player.isOp = false
+                }
             }
         }
     }
@@ -111,6 +115,10 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
     fun playerDeath(player: Player) {
         survivals.remove(player)
         permissionMap[player]?.setPermission("uhc.center", false)
+        if (!player.isOp) {
+            player.isOp = true
+            player.isOp = false
+        }
         if (survivals.size > 1) {
             Bukkit.broadcastMessage(survivals.size.toString() + " players are remaining.")
         } else {
