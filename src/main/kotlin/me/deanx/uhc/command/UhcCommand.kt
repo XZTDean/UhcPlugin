@@ -28,7 +28,11 @@ class UhcCommand(private val plugin: Plugin) : CommandExecutor {
 
     private fun startGame(sender: CommandSender): String? {
         if (sender is Player) {
-            if (!plugin.startGame(sender.location)) {
+            val location = sender.location
+            location.x = location.blockX + 0.5
+            location.y = location.blockY + 0.5
+            location.z = location.blockZ + 0.5
+            if (!plugin.startGame(location)) {
                 return "Cannot start, Game is running now."
             }
         } else {

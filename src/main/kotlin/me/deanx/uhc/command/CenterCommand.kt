@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitTask
 class CenterCommand(private val plugin: Plugin) : CommandExecutor {
     init {
         plugin.getCommand("center")!!.setExecutor(this)
+        plugin.getCommand("CenterDistance")!!.setExecutor(this)
     }
 
     private val lastExecutionTime = HashMap<Player, Long>()
