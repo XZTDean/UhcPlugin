@@ -9,7 +9,6 @@ import org.bukkit.util.StringUtil
 class CenterCommandCompleter(private val plugin: Plugin) : TabCompleter {
     init {
         plugin.getCommand("center")!!.tabCompleter = this;
-        plugin.getCommand("CenterDistance")!!.tabCompleter = this;
     }
 
     private val ARG_0 = listOf("AutoQuery")

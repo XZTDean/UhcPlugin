@@ -11,4 +11,4 @@ commands:
   center:
     description: Get the distance to center
     permission: uhc.center
-    aliases: CenterDistance
+    aliases: centerdistance
