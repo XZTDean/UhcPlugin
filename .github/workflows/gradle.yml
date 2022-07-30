@@ -74,3 +74,5 @@ jobs:
         run: echo "eula=true" > eula.txt
       - name: Run the game
         run: java -Xms6G -Xmx6G -jar paper.jar --nogui
+      - name: Check error in logs
+        run: grep "Could not load 'plugins" logs/latest.log || grep "Error occurred while enabling UHC" logs/latest.log && exit 1
