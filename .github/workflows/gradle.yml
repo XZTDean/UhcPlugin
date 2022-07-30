@@ -75,4 +75,4 @@ jobs:
       - name: Run the game
         run: java -Xms6G -Xmx6G -jar paper.jar --nogui
       - name: Check error in logs
-        run: grep "Could not load 'plugins" logs/latest.log || grep "Error occurred while enabling UHC" logs/latest.log && exit 1
+        run: if grep "Could not load 'plugins" logs/latest.log || grep "Error occurred while enabling UHC" logs/latest.log; then exit 1; fi
