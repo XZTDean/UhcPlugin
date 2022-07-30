@@ -12,6 +12,7 @@ class UhcCommandCompleter(private val plugin: Plugin) : TabCompleter {
     }
 
     private val COMMANDS = listOf<String>("start", "stop", "config")
+    private val BOOL = listOf("true", "false")
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<out String>): List<String> {
         val hint = mutableListOf<String>()
@@ -20,6 +21,11 @@ class UhcCommandCompleter(private val plugin: Plugin) : TabCompleter {
             2 -> {
                 if (args[0].equals("config", true)) {
                     StringUtil.copyPartialMatches(args[1], plugin.config.CONFIGS, hint)
+                }
+            }
+            3 -> {
+                if (args[0].equals("config", true) && args[1].lowercase() in plugin.config.BOOLEAN_CONFIG) {
+                    StringUtil.copyPartialMatches(args[2], BOOL, hint)
                 }
             }
         }

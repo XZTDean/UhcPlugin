@@ -18,7 +18,7 @@ class CenterCommand(private val plugin: Plugin) : CommandExecutor {
     private var center: Location? = null
     private var enabled: Boolean = false
     private var allowAutoQuery: Boolean = false
-    private var delay = plugin.config.centerDistanceDelay
+    private var delay = plugin.config.centerDistanceDelay * 20
     private val autoQueryPlayer = HashMap<Player, BukkitTask>()
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -67,7 +67,7 @@ class CenterCommand(private val plugin: Plugin) : CommandExecutor {
             this.center = center
             enabled = true
             allowAutoQuery = plugin.config.allowAutoQueryCenterDistance
-            delay = plugin.config.centerDistanceDelay
+            delay = plugin.config.centerDistanceDelay * 20
             if (allowAutoQuery && plugin.config.enableAutoQueryCenterDistance) {
                 Bukkit.getOnlinePlayers().forEach { it.enableAutoQuery() }
             }

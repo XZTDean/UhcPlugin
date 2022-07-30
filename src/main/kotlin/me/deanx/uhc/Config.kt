@@ -9,7 +9,10 @@ class Config(private val plugin: Plugin) {
         plugin.getConfig().options().copyDefaults(true)
     }
 
-    val CONFIGS: Set<String> = hashSetOf("gamemode", "difficulty", "initborder", "endborder", "timetoshrink", "timebeforeshrink")
+    val CONFIGS: Set<String> = hashSetOf("gamemode", "difficulty", "initborder", "endborder", "timetoshrink", "timebeforeshrink",
+        "centerdistancedelay", "enablecenterdistance", "allowautoquerycenterdistance", "enableautoquerycenterdistance")
+
+    val BOOLEAN_CONFIG = hashSetOf("enablecenterdistance", "allowautoquerycenterdistance", "enableautoquerycenterdistance")
 
     private val changedList = HashMap<String, Any>()
 
@@ -55,9 +58,9 @@ class Config(private val plugin: Plugin) {
             changedList["center_distance.enable"] = value
         }
 
-    var centerDistanceDelay: Long = plugin.getConfig().getLong("center_distance.delay") * 20
+    var centerDistanceDelay: Long = plugin.getConfig().getLong("center_distance.delay")
         set(value) {
-            field = value * 20
+            field = value
             changedList["center_distance.delay"] = value
         }
 
@@ -119,6 +122,10 @@ class Config(private val plugin: Plugin) {
             "endborder" -> endBorderSize.toString()
             "timetoshrink" -> timeToShrink.toString()
             "timebeforeshrink" -> timeBeforeShrink.toString()
+            "centerdistancedelay" -> centerDistanceDelay.toString()
+            "enablecenterdistance" -> enableCenterDistance.toString()
+            "allowautoquerycenterdistance" -> allowAutoQueryCenterDistance.toString()
+            "enableautoquerycenterdistance" -> enableAutoQueryCenterDistance.toString()
             else -> ""
         }
     }
@@ -131,6 +138,10 @@ class Config(private val plugin: Plugin) {
             "endborder" -> endBorderSize = value.toDouble()
             "timetoshrink" -> timeToShrink = value.toLong()
             "timebeforeshrink" -> timeBeforeShrink = value.toLong()
+            "centerdistancedelay" -> centerDistanceDelay = value.toLong()
+            "enablecenterdistance" -> enableCenterDistance = value.lowercase().toBooleanStrict()
+            "allowautoquerycenterdistance" -> allowAutoQueryCenterDistance = value.lowercase().toBooleanStrict()
+            "enableautoquerycenterdistance" -> enableAutoQueryCenterDistance = value.lowercase().toBooleanStrict()
             else -> return false
         }
         return true
