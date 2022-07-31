@@ -8,6 +8,8 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitTask
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class CenterCommand(private val plugin: Plugin) : CommandExecutor {
     init {
@@ -47,7 +49,8 @@ class CenterCommand(private val plugin: Plugin) : CommandExecutor {
     }
 
     private fun getCenterDistance(player: Player, currentTime: Long) {
-        val distance = player.location.distance(center!!)
+        val playerLocation = player.location
+        val distance = sqrt((playerLocation.x - center!!.x).pow(2) + (playerLocation.z - center!!.z).pow(2))
         player.sendMessage("The distance to center is %.2f".format(distance))
         lastExecutionTime[player] = currentTime
     }
