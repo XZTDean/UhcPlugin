@@ -57,7 +57,7 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
 
     fun gameEnd() {
         worldBorder.size = worldBorder.size
-        Bukkit.getScheduler().runTaskLater(plugin, Runnable { worldBorder.reset() }, 200)
+        Bukkit.getScheduler().runTaskLater(plugin, Runnable { if (!plugin.hasGame()) worldBorder.reset() }, 200)
         deathListener.unregister()
         disconnectionListener.unregister()
         congratulationDisplay()

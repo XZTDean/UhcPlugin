@@ -25,7 +25,7 @@ class Plugin : JavaPlugin() {
     }
 
     fun startGame(center: Location): Boolean {
-        if (uhcGame != null) {
+        if (hasGame()) {
             return false
         }
         uhcGame = UhcGame.newGame(this, center)
@@ -36,7 +36,7 @@ class Plugin : JavaPlugin() {
     }
 
     fun stopGame(): Boolean {
-        if (uhcGame == null) {
+        if (!hasGame()) {
             return false
         }
         uhcGame!!.gameEnd()
@@ -46,5 +46,9 @@ class Plugin : JavaPlugin() {
     fun removeGame() {
         uhcGame = null
         centerCommand.endGame()
+    }
+
+    fun hasGame() : Boolean {
+        return uhcGame != null
     }
 }
