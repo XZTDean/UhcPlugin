@@ -2,19 +2,27 @@ package me.deanx.uhc
 
 import org.bukkit.Difficulty
 import org.bukkit.GameMode
+import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
 
 class Config(private val plugin: Plugin) {
+    val CONFIGS: Set<String> = hashSetOf("gamemode", "difficulty", "initborder", "endborder", "timetoshrink",
+        "timebeforeshrink","centerdistancedelay", "enablecenterdistance", "allowautoquerycenterdistance",
+        "enableautoquerycenterdistance", "killreward")
+
+    val BOOLEAN_CONFIGS = hashSetOf("enablecenterdistance", "allowautoquerycenterdistance", "enableautoquerycenterdistance")
+
+    val ITEM_CONFIGS = hashSetOf("killreward")
+
+    private val changedList = HashMap<String, Any?>()
+
+    val itemList = mutableListOf<Material>()
+
     init {
         plugin.saveDefaultConfig()
         plugin.getConfig().options().copyDefaults(true)
+        generateItemList()
     }
-
-    val CONFIGS: Set<String> = hashSetOf("gamemode", "difficulty", "initborder", "endborder", "timetoshrink", "timebeforeshrink",
-        "centerdistancedelay", "enablecenterdistance", "allowautoquerycenterdistance", "enableautoquerycenterdistance")
-
-    val BOOLEAN_CONFIG = hashSetOf("enablecenterdistance", "allowautoquerycenterdistance", "enableautoquerycenterdistance")
-
-    private val changedList = HashMap<String, Any>()
 
     var initBorderSize = plugin.getConfig().getDouble("border_size.start")
         set(value) {
@@ -76,6 +84,12 @@ class Config(private val plugin: Plugin) {
             changedList["center_distance.enable_auto_query"] = value
         }
 
+    var killReward: ItemStack? = getItemStackFromString(plugin.getConfig().getString("kill_reward"))
+        set(value) {
+            field = value
+            changedList["kill_reward"] = itemStackInfo(value)
+        }
+
     fun saveConfig() {
         changedList.forEach { entry ->
             plugin.getConfig().set(entry.key, entry.value)
@@ -113,6 +127,32 @@ class Config(private val plugin: Plugin) {
         Difficulty.EASY -> "EASY"
         Difficulty.PEACEFUL -> "PEACEFUL"
     }
+    
+    private fun getItemStackFromString(itemInfo: String?): ItemStack? {
+        if (itemInfo.isNullOrBlank()) {
+            return null
+        }
+        val res = itemInfo.split(" ")
+        val material = Material.getMaterial(res[0])
+        val amount = if (res.size >= 2) res[1].toInt() else 1
+        return material?.let { ItemStack(it, amount) }
+    }
+
+    private fun itemStackInfo(itemStack: ItemStack?): String? {
+        var ret = itemStack?.data?.itemType?.name
+        if (ret != null) {
+            ret += " " + itemStack!!.amount.toString()
+        }
+        return ret
+    }
+
+    private fun generateItemList() {
+        Material.values().forEach { material ->
+            if (material.isItem && !material.name.startsWith("LEGACY")) {
+                itemList.add(material)
+            }
+        }
+    }
 
     fun get(field: String): String {
         return when(field.lowercase()) {
@@ -126,6 +166,7 @@ class Config(private val plugin: Plugin) {
             "enablecenterdistance" -> enableCenterDistance.toString()
             "allowautoquerycenterdistance" -> allowAutoQueryCenterDistance.toString()
             "enableautoquerycenterdistance" -> enableAutoQueryCenterDistance.toString()
+            "killreward" -> itemStackInfo(killReward).orEmpty()
             else -> ""
         }
     }
@@ -142,6 +183,7 @@ class Config(private val plugin: Plugin) {
             "enablecenterdistance" -> enableCenterDistance = value.lowercase().toBooleanStrict()
             "allowautoquerycenterdistance" -> allowAutoQueryCenterDistance = value.lowercase().toBooleanStrict()
             "enableautoquerycenterdistance" -> enableAutoQueryCenterDistance = value.lowercase().toBooleanStrict()
+            "killreward" -> killReward = getItemStackFromString(value)
             else -> return false
         }
         return true
