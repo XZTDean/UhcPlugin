@@ -132,9 +132,18 @@ class Config(private val plugin: Plugin) {
         if (itemInfo.isNullOrBlank()) {
             return null
         }
-        val res = itemInfo.split(" ")
-        val material = Material.getMaterial(res[0])
-        val amount = if (res.size >= 2) res[1].toInt() else 1
+        return getItemStackFromList(itemInfo.split(" "))
+    }
+
+    private fun getItemStackFromList(itemInfo: List<String>): ItemStack? {
+        if (itemInfo.isEmpty()) {
+            return null
+        }
+        val material = Material.getMaterial(itemInfo[0].uppercase())
+        var amount = if (itemInfo.size >= 2) itemInfo[1].toIntOrNull() else 1
+        if (amount == null || amount < 1) {
+            amount = 1
+        }
         return material?.let { ItemStack(it, amount) }
     }
 
@@ -171,19 +180,19 @@ class Config(private val plugin: Plugin) {
         }
     }
 
-    fun set(field: String, value: String): Boolean {
+    fun set(field: String, values: List<String>): Boolean {
         when(field) {
-            "gamemode" -> gameMode = getGameModeFromString(value)
-            "difficulty" -> difficulty = getDifficultyFromString(value)
-            "initborder" -> initBorderSize = value.toDouble()
-            "endborder" -> endBorderSize = value.toDouble()
-            "timetoshrink" -> timeToShrink = value.toLong()
-            "timebeforeshrink" -> timeBeforeShrink = value.toLong()
-            "centerdistancedelay" -> centerDistanceDelay = value.toLong()
-            "enablecenterdistance" -> enableCenterDistance = value.lowercase().toBooleanStrict()
-            "allowautoquerycenterdistance" -> allowAutoQueryCenterDistance = value.lowercase().toBooleanStrict()
-            "enableautoquerycenterdistance" -> enableAutoQueryCenterDistance = value.lowercase().toBooleanStrict()
-            "killreward" -> killReward = getItemStackFromString(value)
+            "gamemode" -> gameMode = getGameModeFromString(values[0])
+            "difficulty" -> difficulty = getDifficultyFromString(values[0])
+            "initborder" -> initBorderSize = values[0].toDouble()
+            "endborder" -> endBorderSize = values[0].toDouble()
+            "timetoshrink" -> timeToShrink = values[0].toLong()
+            "timebeforeshrink" -> timeBeforeShrink = values[0].toLong()
+            "centerdistancedelay" -> centerDistanceDelay = values[0].toLong()
+            "enablecenterdistance" -> enableCenterDistance = values[0].lowercase().toBooleanStrict()
+            "allowautoquerycenterdistance" -> allowAutoQueryCenterDistance = values[0].lowercase().toBooleanStrict()
+            "enableautoquerycenterdistance" -> enableAutoQueryCenterDistance = values[0].lowercase().toBooleanStrict()
+            "killreward" -> killReward = getItemStackFromList(values)
             else -> return false
         }
         return true

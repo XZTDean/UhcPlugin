@@ -56,11 +56,11 @@ class UhcCommand(private val plugin: Plugin) : CommandExecutor {
         }
         val configName = args[0].lowercase()
         if (!plugin.config.CONFIGS.contains(configName)) {
-            return "Cannot find the config " + args[1]
+            return "Cannot find the config " + args[0]
         }
         if (args.size > 1) {
-            plugin.config.set(configName, args[2])
+            plugin.config.set(configName, args.subList(1, args.size))
         }
-        return args[1] + " = " + plugin.config.get(configName)
+        return args[0] + " = " + plugin.config.get(configName)
     }
 }
