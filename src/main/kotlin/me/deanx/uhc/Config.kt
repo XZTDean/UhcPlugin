@@ -139,7 +139,7 @@ class Config(private val plugin: Plugin) {
     }
 
     private fun itemStackInfo(itemStack: ItemStack?): String? {
-        var ret = itemStack?.data?.itemType?.name
+        var ret = itemStack?.type?.name
         if (ret != null) {
             ret += " " + itemStack!!.amount.toString()
         }
