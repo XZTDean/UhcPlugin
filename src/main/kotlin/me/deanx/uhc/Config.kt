@@ -155,7 +155,7 @@ class Config(private val plugin: Plugin) {
     }
 
     fun get(field: String): String {
-        return when(field.lowercase()) {
+        return when(field) {
             "gamemode" -> getGameModeName(gameMode)
             "difficulty" -> difficulty.name
             "initborder" -> initBorderSize.toString()
@@ -172,7 +172,7 @@ class Config(private val plugin: Plugin) {
     }
 
     fun set(field: String, value: String): Boolean {
-        when(field.lowercase()) {
+        when(field) {
             "gamemode" -> gameMode = getGameModeFromString(value)
             "difficulty" -> difficulty = getDifficultyFromString(value)
             "initborder" -> initBorderSize = value.toDouble()
