@@ -13,7 +13,7 @@ class UhcCommandCompleter(private val plugin: Plugin) : TabCompleter {
 
     private val COMMANDS = listOf<String>("start", "stop", "config")
     private val BOOL = listOf("true", "false")
-    private val itemList = plugin.config.itemList.map { it.name }
+    private val itemList = plugin.config.itemSet.map { it.name }
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<out String>): List<String> {
         val hint = mutableListOf<String>()

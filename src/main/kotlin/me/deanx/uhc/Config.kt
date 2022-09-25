@@ -6,17 +6,29 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 class Config(private val plugin: Plugin) {
-    val CONFIGS: Set<String> = hashSetOf("gamemode", "difficulty", "initborder", "endborder", "timetoshrink",
-        "timebeforeshrink","centerdistancedelay", "enablecenterdistance", "allowautoquerycenterdistance",
-        "enableautoquerycenterdistance", "killreward")
+    enum class Configs(val key: String, val path: String) {
+        Gamemode("gamemode", "gamemode"),
+        Difficulty("difficulty", "difficulty"),
+        InitBorder("initborder", "border_size.start"),
+        EndBorder("endborder", "border_size.end"),
+        TimeToShrink("timetoshrink", "border_size.time_to_shrink"),
+        TimeBeforeShrink("timebeforeshrink", "border_size.time_before_shrink"),
+        CenterDistanceDelay("centerdistancedelay", "center_distance.delay"),
+        EnableCenterDistance("enablecenterdistance", "center_distance.enable"),
+        AllowAutoQueryCenterDistance("allowautoquerycenterdistance", "center_distance.allow_auto_query"),
+        EnableAutoQueryCenterDistance("enableautoquerycenterdistance", "center_distance.enable_auto_query"),
+        KillReward("killreward", "kill_reward"),
+    }
 
-    val BOOLEAN_CONFIGS = hashSetOf("enablecenterdistance", "allowautoquerycenterdistance", "enableautoquerycenterdistance")
+    val CONFIGS: Set<String> = Configs.values().map { it.key }.toHashSet()
 
-    val ITEM_CONFIGS = hashSetOf("killreward")
+    val BOOLEAN_CONFIGS = hashSetOf(Configs.EnableCenterDistance.key, Configs.AllowAutoQueryCenterDistance.key, Configs.EnableAutoQueryCenterDistance.key)
 
-    private val changedList = HashMap<String, Any?>()
+    val ITEM_CONFIGS = hashSetOf(Configs.KillReward.key)
 
-    val itemList = mutableListOf<Material>()
+    private val changedList = HashMap<Configs, Any?>()
+
+    val itemSet = HashSet<Material>()
 
     init {
         plugin.saveDefaultConfig()
@@ -24,75 +36,75 @@ class Config(private val plugin: Plugin) {
         generateItemList()
     }
 
-    var initBorderSize = plugin.getConfig().getDouble("border_size.start")
+    var initBorderSize = plugin.getConfig().getDouble(Configs.InitBorder.path)
         set(value) {
             field = value
-            changedList["border_size.start"] = value
+            changedList[Configs.InitBorder] = value
         }
 
-    var endBorderSize = plugin.getConfig().getDouble("border_size.end")
+    var endBorderSize = plugin.getConfig().getDouble(Configs.EndBorder.path)
         set(value) {
             field = value
-            changedList["border_size.end"] = value
+            changedList[Configs.EndBorder] = value
         }
 
-    var timeToShrink = plugin.getConfig().getLong("border_size.time_to_shrink")
+    var timeToShrink = plugin.getConfig().getLong(Configs.TimeToShrink.path)
         set(value) {
             field = value
-            changedList["border_size.time_to_shrink"] = value
+            changedList[Configs.TimeToShrink] = value
         }
 
-    var timeBeforeShrink = plugin.getConfig().getLong("border_size.time_before_shrink")
+    var timeBeforeShrink = plugin.getConfig().getLong(Configs.TimeBeforeShrink.path)
         set(value) {
             field = value
-            changedList["border_size.time_before_shrink"] = value
+            changedList[Configs.TimeBeforeShrink] = value
         }
 
-    var gameMode: GameMode = getGameModeFromString(plugin.getConfig().getString("gamemode"))
+    var gameMode: GameMode = getGameModeFromString(plugin.getConfig().getString(Configs.Gamemode.path))
         set(value) {
             field = value
-            changedList["gamemode"] = getGameModeName(value)
+            changedList[Configs.Gamemode] = getGameModeName(value)
         }
 
-    var difficulty: Difficulty = getDifficultyFromString(plugin.getConfig().getString("difficulty"))
+    var difficulty: Difficulty = getDifficultyFromString(plugin.getConfig().getString(Configs.Difficulty.path))
         set(value) {
             field = value
-            changedList["difficulty"] = getDifficultyName(value)
+            changedList[Configs.Difficulty] = getDifficultyName(value)
         }
 
-    var enableCenterDistance: Boolean = plugin.getConfig().getBoolean("center_distance.enable")
+    var enableCenterDistance: Boolean = plugin.getConfig().getBoolean(Configs.EnableCenterDistance.path)
         set(value) {
             field = value
-            changedList["center_distance.enable"] = value
+            changedList[Configs.EnableCenterDistance] = value
         }
 
-    var centerDistanceDelay: Long = plugin.getConfig().getLong("center_distance.delay")
+    var centerDistanceDelay: Long = plugin.getConfig().getLong(Configs.CenterDistanceDelay.path)
         set(value) {
             field = value
-            changedList["center_distance.delay"] = value
+            changedList[Configs.CenterDistanceDelay] = value
         }
 
-    var allowAutoQueryCenterDistance: Boolean = plugin.getConfig().getBoolean("center_distance.allow_auto_query")
+    var allowAutoQueryCenterDistance: Boolean = plugin.getConfig().getBoolean(Configs.AllowAutoQueryCenterDistance.path)
         set(value) {
             field = value
-            changedList["center_distance.allow_auto_query"] = value
+            changedList[Configs.AllowAutoQueryCenterDistance] = value
         }
 
-    var enableAutoQueryCenterDistance: Boolean = plugin.getConfig().getBoolean("center_distance.enable_auto_query")
+    var enableAutoQueryCenterDistance: Boolean = plugin.getConfig().getBoolean(Configs.EnableAutoQueryCenterDistance.path)
         set(value) {
             field = value
-            changedList["center_distance.enable_auto_query"] = value
+            changedList[Configs.EnableAutoQueryCenterDistance] = value
         }
 
-    var killReward: ItemStack? = getItemStackFromString(plugin.getConfig().getString("kill_reward"))
+    var killReward: ItemStack? = getItemStackFromString(plugin.getConfig().getString(Configs.KillReward.path))
         set(value) {
             field = value
-            changedList["kill_reward"] = itemStackInfo(value)
+            changedList[Configs.KillReward] = itemStackInfo(value)
         }
 
     fun saveConfig() {
         changedList.forEach { entry ->
-            plugin.getConfig().set(entry.key, entry.value)
+            plugin.getConfig().set(entry.key.path, entry.value)
         }
         changedList.clear()
         plugin.saveConfig()
@@ -140,6 +152,9 @@ class Config(private val plugin: Plugin) {
             return null
         }
         val material = Material.getMaterial(itemInfo[0].uppercase())
+        if (material !in itemSet) {
+            return null
+        }
         var amount = if (itemInfo.size >= 2) itemInfo[1].toIntOrNull() else 1
         if (amount == null || amount < 1) {
             amount = 1
@@ -158,7 +173,7 @@ class Config(private val plugin: Plugin) {
     private fun generateItemList() {
         Material.values().forEach { material ->
             if (material.isItem && !material.name.startsWith("LEGACY")) {
-                itemList.add(material)
+                itemSet.add(material)
             }
         }
     }
