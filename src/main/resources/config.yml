@@ -17,3 +17,4 @@ center_distance:
   delay: 30
   allow_auto_query: true
   enable_auto_query: false
+kill_reward: GOLDEN_APPLE

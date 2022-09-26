@@ -120,9 +120,16 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
             player.isOp = false
         }
         if (survivals.size > 1) {
+            killReward(player)
             Bukkit.broadcastMessage(survivals.size.toString() + " players are remaining.")
         } else {
             gameEnd()
+        }
+    }
+
+    private fun killReward(player: Player) {
+        player.killer?.let { killer ->
+            plugin.config.killReward?.let { item -> killer.inventory.addItem(item) }
         }
     }
 
