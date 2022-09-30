@@ -19,6 +19,11 @@ class Config(private val plugin: Plugin) {
         AllowAutoQueryCenterDistance("allowautoquerycenterdistance", "center_distance.allow_auto_query"),
         EnableAutoQueryCenterDistance("enableautoquerycenterdistance", "center_distance.enable_auto_query"),
         KillReward("killreward", "kill_reward"),
+        Helmet("helmet", "inventory.helmet"),
+        Chestplate("chestplate", "inventory.chestplate"),
+        Leggings("leggings", "inventory.leggings"),
+        Boots("boots", "inventory.boots"),
+        Inventory("inventory", "inventory.items"),
     }
 
     val CONFIGS: Set<String> = Configs.values().map { it.key }.toHashSet()
@@ -101,6 +106,30 @@ class Config(private val plugin: Plugin) {
         set(value) {
             field = value
             changedList[Configs.KillReward] = itemStackInfo(value)
+        }
+
+    var helmat: ItemStack? = getItemStackFromString(plugin.getConfig().getString(Configs.Helmet.path))
+        set(value) {
+            field = value
+            changedList[Configs.Helmet] = itemStackInfo(value)
+        }
+
+    var chestplate: ItemStack? = getItemStackFromString(plugin.getConfig().getString(Configs.Chestplate.path))
+        set(value) {
+            field = value
+            changedList[Configs.Chestplate] = itemStackInfo(value)
+        }
+
+    var leggings: ItemStack? = getItemStackFromString(plugin.getConfig().getString(Configs.Leggings.path))
+        set(value) {
+            field = value
+            changedList[Configs.Leggings] = itemStackInfo(value)
+        }
+
+    var boots: ItemStack? = getItemStackFromString(plugin.getConfig().getString(Configs.Boots.path))
+        set(value) {
+            field = value
+            changedList[Configs.Boots] = itemStackInfo(value)
         }
 
     fun saveConfig() {
@@ -193,6 +222,10 @@ class Config(private val plugin: Plugin) {
             Configs.AllowAutoQueryCenterDistance.key -> allowAutoQueryCenterDistance.toString()
             Configs.EnableAutoQueryCenterDistance.key -> enableAutoQueryCenterDistance.toString()
             Configs.KillReward.key -> itemStackInfo(killReward).orEmpty()
+            Configs.Helmet.key -> itemStackInfo(helmat).orEmpty()
+            Configs.Chestplate.key -> itemStackInfo(chestplate).orEmpty()
+            Configs.Leggings.key -> itemStackInfo(leggings).orEmpty()
+            Configs.Boots.key -> itemStackInfo(boots).orEmpty()
             else -> ""
         }
     }
@@ -210,6 +243,10 @@ class Config(private val plugin: Plugin) {
             Configs.AllowAutoQueryCenterDistance.key -> allowAutoQueryCenterDistance = values[0].lowercase().toBooleanStrict()
             Configs.EnableAutoQueryCenterDistance.key -> enableAutoQueryCenterDistance = values[0].lowercase().toBooleanStrict()
             Configs.KillReward.key -> killReward = getItemStackFromList(values)
+            Configs.Helmet.key -> helmat = getItemStackFromList(values)
+            Configs.Chestplate.key -> chestplate = getItemStackFromList(values)
+            Configs.Leggings.key -> leggings = getItemStackFromList(values)
+            Configs.Boots.key -> boots = getItemStackFromList(values)
             else -> return false
         }
         return true
