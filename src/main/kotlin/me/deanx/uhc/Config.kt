@@ -180,34 +180,34 @@ class Config(private val plugin: Plugin) {
 
     fun get(field: String): String {
         return when(field) {
-            "gamemode" -> getGameModeName(gameMode)
-            "difficulty" -> difficulty.name
-            "initborder" -> initBorderSize.toString()
-            "endborder" -> endBorderSize.toString()
-            "timetoshrink" -> timeToShrink.toString()
-            "timebeforeshrink" -> timeBeforeShrink.toString()
-            "centerdistancedelay" -> centerDistanceDelay.toString()
-            "enablecenterdistance" -> enableCenterDistance.toString()
-            "allowautoquerycenterdistance" -> allowAutoQueryCenterDistance.toString()
-            "enableautoquerycenterdistance" -> enableAutoQueryCenterDistance.toString()
-            "killreward" -> itemStackInfo(killReward).orEmpty()
+            Configs.Gamemode.key -> getGameModeName(gameMode)
+            Configs.Difficulty.key -> difficulty.name
+            Configs.InitBorder.key -> initBorderSize.toString()
+            Configs.EndBorder.key -> endBorderSize.toString()
+            Configs.TimeToShrink.key -> timeToShrink.toString()
+            Configs.TimeBeforeShrink.key -> timeBeforeShrink.toString()
+            Configs.CenterDistanceDelay.key -> centerDistanceDelay.toString()
+            Configs.EnableCenterDistance.key -> enableCenterDistance.toString()
+            Configs.AllowAutoQueryCenterDistance.key -> allowAutoQueryCenterDistance.toString()
+            Configs.EnableAutoQueryCenterDistance.key -> enableAutoQueryCenterDistance.toString()
+            Configs.KillReward.key -> itemStackInfo(killReward).orEmpty()
             else -> ""
         }
     }
 
     fun set(field: String, values: List<String>): Boolean {
         when(field) {
-            "gamemode" -> gameMode = getGameModeFromString(values[0])
-            "difficulty" -> difficulty = getDifficultyFromString(values[0])
-            "initborder" -> initBorderSize = values[0].toDouble()
-            "endborder" -> endBorderSize = values[0].toDouble()
-            "timetoshrink" -> timeToShrink = values[0].toLong()
-            "timebeforeshrink" -> timeBeforeShrink = values[0].toLong()
-            "centerdistancedelay" -> centerDistanceDelay = values[0].toLong()
-            "enablecenterdistance" -> enableCenterDistance = values[0].lowercase().toBooleanStrict()
-            "allowautoquerycenterdistance" -> allowAutoQueryCenterDistance = values[0].lowercase().toBooleanStrict()
-            "enableautoquerycenterdistance" -> enableAutoQueryCenterDistance = values[0].lowercase().toBooleanStrict()
-            "killreward" -> killReward = getItemStackFromList(values)
+            Configs.Gamemode.key -> gameMode = getGameModeFromString(values[0])
+            Configs.Difficulty.key -> difficulty = getDifficultyFromString(values[0])
+            Configs.InitBorder.key -> initBorderSize = values[0].toDouble()
+            Configs.EndBorder.key -> endBorderSize = values[0].toDouble()
+            Configs.TimeToShrink.key -> timeToShrink = values[0].toLong()
+            Configs.TimeBeforeShrink.key -> timeBeforeShrink = values[0].toLong()
+            Configs.CenterDistanceDelay.key -> centerDistanceDelay = values[0].toLong()
+            Configs.EnableCenterDistance.key -> enableCenterDistance = values[0].lowercase().toBooleanStrict()
+            Configs.AllowAutoQueryCenterDistance.key -> allowAutoQueryCenterDistance = values[0].lowercase().toBooleanStrict()
+            Configs.EnableAutoQueryCenterDistance.key -> enableAutoQueryCenterDistance = values[0].lowercase().toBooleanStrict()
+            Configs.KillReward.key -> killReward = getItemStackFromList(values)
             else -> return false
         }
         return true
