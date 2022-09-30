@@ -6,6 +6,7 @@ import org.bukkit.Material
 import org.bukkit.inventory.ItemStack
 
 class Config(private val plugin: Plugin) {
+    /** All the support configs and its key for changing and path for storing */
     enum class Configs(val key: String, val path: String) {
         Gamemode("gamemode", "gamemode"),
         Difficulty("difficulty", "difficulty"),
@@ -170,6 +171,7 @@ class Config(private val plugin: Plugin) {
         return ret
     }
 
+    /** Used for initializing class. Generate itemSet for all available items */
     private fun generateItemList() {
         Material.values().forEach { material ->
             if (material.isItem && !material.name.startsWith("LEGACY")) {
