@@ -30,7 +30,7 @@ class Config(private val plugin: Plugin) {
 
     val BOOLEAN_CONFIGS = hashSetOf(Configs.EnableCenterDistance.key, Configs.AllowAutoQueryCenterDistance.key, Configs.EnableAutoQueryCenterDistance.key)
 
-    val ITEM_CONFIGS = hashSetOf(Configs.KillReward.key)
+    val ITEM_CONFIGS = hashSetOf(Configs.KillReward.key, Configs.Helmet.key, Configs.Chestplate.key, Configs.Leggings.key, Configs.Boots.key)
 
     private val changedList = HashMap<Configs, Any?>()
 

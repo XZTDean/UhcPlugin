@@ -86,7 +86,7 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
             player.health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.baseValue ?: 20.0
             player.foodLevel = 20
             player.saturation = 5f
-            player.inventory.clear()
+            setPlayerInventory(player)
             player.removePotionEffect()
             player.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 2))
             val iterator = Bukkit.getServer().advancementIterator()
@@ -103,6 +103,15 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
                 }
             }
         }
+    }
+
+    private fun setPlayerInventory(player: Player) {
+        val inventory = player.inventory
+        inventory.clear()
+        inventory.helmet = plugin.config.helmat
+        inventory.chestplate = plugin.config.chestplate
+        inventory.leggings = plugin.config.leggings
+        inventory.boots = plugin.config.boots
     }
 
     private fun LivingEntity.removePotionEffect() {
