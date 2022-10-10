@@ -1,5 +1,6 @@
 package me.deanx.uhc.command
 
+import me.deanx.uhc.Config.Configs
 import me.deanx.uhc.Plugin
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -30,7 +31,14 @@ class UhcCommandCompleter(private val plugin: Plugin) : TabCompleter {
                         StringUtil.copyPartialMatches(args[2], BOOL, hint)
                     } else if (args[1].lowercase() in plugin.config.ITEM_CONFIGS) {
                         StringUtil.copyPartialMatches(args[2], itemList, hint)
+                    } else if (args[1].lowercase() == Configs.Inventory.key) {
+                        StringUtil.copyPartialMatches(args[2], listOf("add", "remove", "clear"), hint)
                     }
+                }
+            }
+            4 -> {
+                if (args[1].lowercase() == Configs.Inventory.key && args[2].lowercase() in arrayOf("add", "remove")) {
+                    StringUtil.copyPartialMatches(args[3], itemList, hint)
                 }
             }
         }

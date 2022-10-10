@@ -112,6 +112,9 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
         inventory.chestplate = plugin.config.chestplate
         inventory.leggings = plugin.config.leggings
         inventory.boots = plugin.config.boots
+        plugin.config.inventory.forEach {
+            inventory.addItem(it)
+        }
     }
 
     private fun LivingEntity.removePotionEffect() {

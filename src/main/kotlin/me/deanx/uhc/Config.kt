@@ -247,7 +247,7 @@ class Config(private val plugin: Plugin) {
             Configs.Chestplate.key -> itemStackInfo(chestplate).orEmpty()
             Configs.Leggings.key -> itemStackInfo(leggings).orEmpty()
             Configs.Boots.key -> itemStackInfo(boots).orEmpty()
-            Configs.Inventory.key -> "\n" + inventory.mapNotNull { itemStackInfo(it) }.joinToString(separator = "\n")
+            Configs.Inventory.key -> inventory.mapNotNull { itemStackInfo(it) }.joinToString(prefix = "\n- ", separator = "\n- ")
             else -> ""
         }
     }
