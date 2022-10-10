@@ -205,25 +205,20 @@ class Config(private val plugin: Plugin) {
     private fun updateInventory(operation: String, item: List<String>) {
         when (operation) {
             "add" -> getItemStackFromList(item)?.let { addInventory(it) }
+            "remove" -> getItemStackFromList(item)?.let { removeItemInInventory(it) }
+            "clear" -> inventory.clear()
         }
+        changedList[Configs.Inventory] = inventory.mapNotNull { itemStackInfo(it) }
     }
 
     private fun addInventory(item: ItemStack) {
-        inventory.forEach { containedItem ->
-            if (containedItem.type == item.type) {
-                val remainingSpace = containedItem.maxStackSize - containedItem.amount
-                if (remainingSpace >= item.amount) {
-                    containedItem.amount += item.amount
-                    return
-                } else {
-                    containedItem.amount = containedItem.maxStackSize
-                    item.amount -= remainingSpace
-                }
-            }
-        }
-        if (item.amount > 0) {
-            inventory.add(item)
-        }
+        removeItemInInventory(item)
+        inventory.add(item)
+    }
+
+    private fun removeItemInInventory(item: ItemStack) {
+        val removedList = inventory.mapIndexedNotNull { index, containedItem -> if (containedItem.type == item.type) index else null }
+        removedList.asReversed().forEach { inventory.removeAt(it) }
     }
 
     /** Used for initializing class. Generate itemSet for all available items */
@@ -252,6 +247,7 @@ class Config(private val plugin: Plugin) {
             Configs.Chestplate.key -> itemStackInfo(chestplate).orEmpty()
             Configs.Leggings.key -> itemStackInfo(leggings).orEmpty()
             Configs.Boots.key -> itemStackInfo(boots).orEmpty()
+            Configs.Inventory.key -> "\n" + inventory.mapNotNull { itemStackInfo(it) }.joinToString(separator = "\n")
             else -> ""
         }
     }
@@ -273,6 +269,7 @@ class Config(private val plugin: Plugin) {
             Configs.Chestplate.key -> chestplate = getItemStackFromList(values)
             Configs.Leggings.key -> leggings = getItemStackFromList(values)
             Configs.Boots.key -> boots = getItemStackFromList(values)
+            Configs.Inventory.key -> updateInventory(values[0], values.subList(1, values.size))
             else -> return false
         }
         return true
