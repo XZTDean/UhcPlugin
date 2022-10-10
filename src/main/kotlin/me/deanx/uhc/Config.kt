@@ -132,6 +132,8 @@ class Config(private val plugin: Plugin) {
             changedList[Configs.Boots] = itemStackInfo(value)
         }
 
+    val inventory: MutableList<ItemStack> = plugin.getConfig().getStringList(Configs.Inventory.path).mapNotNull(::getItemStackFromString) as MutableList<ItemStack>
+
     fun saveConfig() {
         changedList.forEach { entry ->
             plugin.getConfig().set(entry.key.path, entry.value)
@@ -198,6 +200,30 @@ class Config(private val plugin: Plugin) {
             ret += " " + itemStack!!.amount.toString()
         }
         return ret
+    }
+
+    private fun updateInventory(operation: String, item: List<String>) {
+        when (operation) {
+            "add" -> getItemStackFromList(item)?.let { addInventory(it) }
+        }
+    }
+
+    private fun addInventory(item: ItemStack) {
+        inventory.forEach { containedItem ->
+            if (containedItem.type == item.type) {
+                val remainingSpace = containedItem.maxStackSize - containedItem.amount
+                if (remainingSpace >= item.amount) {
+                    containedItem.amount += item.amount
+                    return
+                } else {
+                    containedItem.amount = containedItem.maxStackSize
+                    item.amount -= remainingSpace
+                }
+            }
+        }
+        if (item.amount > 0) {
+            inventory.add(item)
+        }
     }
 
     /** Used for initializing class. Generate itemSet for all available items */
