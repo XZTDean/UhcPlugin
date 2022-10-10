@@ -63,7 +63,13 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
         congratulationDisplay()
         val world = center.world!!
         world.setGameRule(GameRule.NATURAL_REGENERATION, true)
-        permissionMap.forEach { it.value.remove() }
+        permissionMap.forEach {
+            it.value.remove()
+            if (!it.key.isOp) {
+                it.key.isOp = true
+                it.key.isOp = false
+            }
+        }
         plugin.removeGame()
     }
 
