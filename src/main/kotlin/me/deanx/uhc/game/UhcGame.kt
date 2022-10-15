@@ -201,9 +201,15 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
     }
 
     private fun isSafeLocation(location: Location): Boolean {
+        val safeBlock = listOf(Material.AIR, Material.SNOW, Material.GRASS, Material.TALL_GRASS, Material.FERN,
+            Material.LARGE_FERN, Material.LILY_PAD, Material.TORCH, Material.SUGAR_CANE, Material.POPPY,
+            Material.DANDELION, Material.ROSE_BUSH, Material.LILAC, Material.PEONY, Material.SUNFLOWER,
+            Material.BLUE_ORCHID, Material.ALLIUM, Material.RED_TULIP, Material.ORANGE_TULIP, Material.WHITE_TULIP,
+            Material.PINK_TULIP, Material.OXEYE_DAISY, Material.CORNFLOWER, Material.LILY_OF_THE_VALLEY)
+        val unsafeBlock = listOf(Material.WATER, Material.LAVA, Material.MAGMA_BLOCK, Material.CACTUS, Material.CAMPFIRE)
         val upCheckLocation = location.clone()
         for (i in 0..2) {
-            if (upCheckLocation.block.type != Material.AIR) {
+            if (upCheckLocation.block.type !in safeBlock) {
                 return false
             }
             upCheckLocation.y += 1
@@ -213,7 +219,7 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
             downCheckLocation.y -= 1
             val type: Material = downCheckLocation.block.type
             if (type != Material.AIR) {
-                return type != Material.WATER && type != Material.LAVA
+                return type !in unsafeBlock
             }
         }
         return false
