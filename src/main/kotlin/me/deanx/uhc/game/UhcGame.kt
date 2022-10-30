@@ -94,7 +94,7 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
             player.saturation = 5f
             setPlayerInventory(player)
             player.removePotionEffect()
-            player.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 2))
+            player.addPotionEffect(PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 500, 5))
             val iterator = Bukkit.getServer().advancementIterator()
             while (iterator.hasNext()) {
                 val progress = player.getAdvancementProgress(iterator.next())
