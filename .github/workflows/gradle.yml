@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master ]
 
+permissions:
+  contents: write
+
 jobs:
   build:
 
@@ -53,7 +56,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Download PaperUpdater
-        uses: robinraju/release-downloader@v1.4
+        uses: robinraju/release-downloader@v1.6
         with:
           repository: XZTDean/PaperUpdater
           latest: true
