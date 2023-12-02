@@ -1,6 +1,6 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.7.20'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.21'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group 'me.deanx'
@@ -20,8 +20,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.7.20'
-    compileOnly 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.21'
+    compileOnly 'org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT'
 }
 
 compileKotlin {
