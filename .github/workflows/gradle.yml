@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -27,6 +27,8 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: shadowJar
+          dependency-graph: generate-and-submit
+          artifact-retention-days: 7
       - name: Push release
         run: |
           git init
@@ -51,7 +53,7 @@ jobs:
           ref: release
           path: plugins
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -62,7 +64,7 @@ jobs:
           latest: true
           fileName: "PaperUpdater*.jar"
       - name: Download minecraft new build
-        run: java -jar -Xms4G -Xmx4G PaperUpdater*.jar
+        run: java -jar -Xms1G -Xmx1G PaperUpdater*.jar
       - name: Download StopServer plugins
         uses: robinraju/release-downloader@v1.8
         with:
