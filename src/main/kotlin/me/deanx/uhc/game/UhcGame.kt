@@ -227,7 +227,7 @@ class UhcGame private constructor(private val plugin: Plugin, val center: Locati
 
     private fun World.setWorldDifficulty(difficulty: Difficulty) {
         this.difficulty = difficulty
-        val allowMonster = (difficulty == Difficulty.PEACEFUL)
+        val allowMonster = (difficulty != Difficulty.PEACEFUL)
         this.setSpawnFlags(allowMonster, allowAnimals)
     }
 }
