@@ -23,6 +23,8 @@ jobs:
           distribution: 'temurin'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Set suffix of the output jar file to commit hash
+        run: sed -i 's/archiveClassifier.set("")/archiveClassifier.set("'$(git rev-parse --short $GITHUB_SHA)'")/g' build.gradle.kts
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
@@ -36,7 +38,7 @@ jobs:
           git config --local user.email "41898282+github-actions@users.noreply.github.com"
           git checkout -b release
           git add .
-          git commit -m "Publish Release"
+          git commit -m "Publish Release for $GITHUB_SHA"
           git remote add origin "https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}"
           git push -f -u origin release
         working-directory: build/libs
