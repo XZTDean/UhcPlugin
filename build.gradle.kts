@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "me.deanx"
-version = "0.4"
+version = "0.5"
 
 repositories {
     mavenCentral()
