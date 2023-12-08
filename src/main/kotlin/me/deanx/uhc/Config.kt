@@ -223,11 +223,9 @@ class Config(private val plugin: Plugin) {
 
     /** Used for initializing class. Generate itemSet for all available items */
     private fun generateItemList() {
-        Material.values().forEach { material ->
-            if (material.isItem && !material.name.startsWith("LEGACY")) {
-                itemSet.add(material)
-            }
-        }
+        itemSet.addAll(
+            Material.entries.filter { it.isItem && !it.name.startsWith("LEGACY") }
+        )
     }
 
     fun get(field: String): String {
