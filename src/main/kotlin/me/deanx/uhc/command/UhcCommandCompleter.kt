@@ -3,6 +3,7 @@ package me.deanx.uhc.command
 import me.deanx.uhc.Config.Configs
 import me.deanx.uhc.Plugin
 import org.bukkit.Difficulty
+import org.bukkit.GameMode
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
@@ -36,6 +37,8 @@ class UhcCommandCompleter(private val plugin: Plugin) : TabCompleter {
                         StringUtil.copyPartialMatches(args[2], listOf("add", "remove", "clear"), hint)
                     } else if (args[1].lowercase() == Configs.Difficulty.key) {
                         StringUtil.copyPartialMatches(args[2], Difficulty.entries.map { it.name.lowercase() }, hint)
+                    } else if (args[1].lowercase() == Configs.Gamemode.key) {
+                        StringUtil.copyPartialMatches(args[2], GameMode.entries.map { it.name.lowercase() }, hint)
                     }
                 }
             }
