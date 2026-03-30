@@ -1,10 +1,10 @@
 plugins {
-    kotlin("jvm") version "1.9.21"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    kotlin("jvm") version "2.3.20"
+    id("com.gradleup.shadow") version "9.4.1"
 }
 
 group = "me.deanx"
-version = "0.5"
+version = "0.5.1"
 
 repositories {
     mavenCentral()
@@ -19,12 +19,18 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.21")
     compileOnly("org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT")
 }
 
 kotlin {
-    jvmToolchain(8)
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks.jar {
